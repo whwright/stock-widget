@@ -1,4 +1,12 @@
 #!/usr/bin/env python3
+
+"""
+usage: get_stock_price.py [SYMBOL]
+
+Get stock information for a given symbol. Writes '[stock price] [percent change]'
+to standard out.
+"""
+
 import argparse
 import requests
 import sys
@@ -18,9 +26,9 @@ def lookup_stock(symbol):
         print('Error looking up symbol {}'.format(symbol))
         sys.exit(1)
 
-    # the response back is weird... it starts with \n// [{..}]
-    json_resp = json.loads(r.text[4:])
-    stock_info = json_resp[0]
+    # response starts with a comment, so strip that off
+    text = r.text.strip().replace('//', '')
+    stock_info = json.loads(text)[0]  # should be an array of length 0
 
     print('{price} {percent_change}'.format(price=stock_info['l'], percent_change=stock_info['cp']))
 
