@@ -1,4 +1,7 @@
 local wibox = require("wibox")
+local awful = require("awful")
+awful.util = require("awful.util")
+local os = require("os")
 
 
 local function color_tags(color)
@@ -27,6 +30,10 @@ function stock_widget:new(args)
 end
 
 function stock_widget:init(args)
+    if args.symbol == nil then
+        error("symbol is require")
+    end
+
     self.symbol = args.symbol
     self.widget = wibox.widget.textbox()
 
@@ -37,6 +44,20 @@ function stock_widget:init(args)
     self.gain_color = args.gain_color or "green"
     self.loss_color = args.loss_color or "red"
 
+    self.get_stock_price_location = args.get_stock_price_location
+    if self.get_stock_price_location == nil then
+        local home = os.getenv("HOME")
+        local base_config_location = home .. "/.config/awesome/get_stock_price.py"
+        local sub_module_location = home .. "/.config/awesome/stock-widget/get_stock_price.py"
+        if awful.util.file_readable(base_config_location) then
+            self.get_stock_price_location = base_config_location
+        elseif awful.util.file_readable(sub_module_location) then
+            self.get_stock_price_location = sub_module_location
+        else
+            error("could not find get_stock_price.py")
+        end
+    end
+
     self.timer = timer({ timeout = args.timeout or 60 })
     self.timer:connect_signal("timeout", function() self:update() end)
     self.timer:start()
@@ -46,8 +67,7 @@ function stock_widget:init(args)
 end
 
 function stock_widget:get_stock_info()
-    local cmd = "~/.config/awesome/get_stock_price.py " .. self.symbol
-    local f = assert(io.popen(cmd, "r"))
+    local f = assert(io.popen(self.get_stock_price_location .. " " .. self.symbol, "r"))
     local stock_info = assert(f:read("*a"))
     f:close()
 
