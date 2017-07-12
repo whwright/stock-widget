@@ -47,11 +47,11 @@ function stock_widget:init(args)
     self.get_stock_price_location = args.get_stock_price_location
     if self.get_stock_price_location == nil then
         local home = os.getenv("HOME")
-        local base_config_location = home .. "/.config/awesome/get_stock_price.py"
-        local sub_module_location = home .. "/.config/awesome/stock-widget/get_stock_price.py"
-        if awful.util.file_readable(base_config_location) then
+        local base_config_location = home .. "/.config/awesome"
+        local sub_module_location = home .. "/.config/awesome/stock-widget"
+        if awful.util.file_readable(base_config_location .. "/get_stock_price.py") then
             self.get_stock_price_location = base_config_location
-        elseif awful.util.file_readable(sub_module_location) then
+        elseif awful.util.file_readable(sub_module_location .. "/get_stock_price.py") then
             self.get_stock_price_location = sub_module_location
         else
             error("could not find get_stock_price.py")
@@ -67,7 +67,7 @@ function stock_widget:init(args)
 end
 
 function stock_widget:get_stock_info()
-    local f = assert(io.popen(self.get_stock_price_location .. " " .. self.symbol, "r"))
+    local f = assert(io.popen(self.get_stock_price_location .. "/get_stock_price.py" .. " " .. self.symbol, "r"))
     local stock_info = assert(f:read("*a"))
     f:close()
 

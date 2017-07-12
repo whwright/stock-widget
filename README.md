@@ -9,7 +9,10 @@ Inspiration taken from [deficient](https://github.com/deficient) widgets.
 
 ### Installation
 
-Put `stock-widget.lua` and `get_stock_price.py` in your awesome config folder.
+```bash
+cd ~/.config/awesome/
+git clone git@github.com:whwright/stock-widget.git
+```
 
 Then, in your rc.lua:
 
@@ -35,6 +38,13 @@ stock_widget({
     symbol_color = "white",
     price_color = nil,
     gain_color = "green",
-    loss_color = "red"
+    loss_color = "red",
+    timeout = 60,
+    get_stock_price_location = nil
 })
 ```
+
+`get_stock_price_location` is used to find the location of `get_stock_price.py`. By default, it will try to find the
+script in your awesome config folder, or in the directory `stock-widget` in your awesome config folder (in case you
+have cloned this repo as sub module). If that doesn't work for your use case, you can always override where the location
+is with `get_stock_price_location`.
