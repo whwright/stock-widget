@@ -46,7 +46,8 @@ function stock_widget:init(args)
 end
 
 function stock_widget:get_stock_info()
-    local f = assert(io.popen("~/.config/awesome/get_stock_price.py NYSE:HD", "r"))
+    local cmd = "~/.config/awesome/get_stock_price.py " .. self.symbol
+    local f = assert(io.popen(cmd, "r"))
     local stock_info = assert(f:read("*a"))
     f:close()
 
@@ -61,7 +62,7 @@ function stock_widget:get_stock_info()
 end
 
 function stock_widget:update()
-    local data = self.get_stock_info()
+    local data = self:get_stock_info()
     data.symbol = self.symbol
 
     -- colors
