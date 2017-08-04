@@ -46,5 +46,4 @@ stock_widget({
 
 `get_stock_price_location` is used to find the location of `get_stock_price.py`. By default, it will try to find the
 script in your awesome config folder, or in the directory `stock-widget` in your awesome config folder (in case you
-have cloned this repo as sub module). If that doesn't work for your use case, you can always override where the location
-is with `get_stock_price_location`.
+have cloned this repo as sub module). If that doesn't work for your use case, you can always override the directory containing the script with `get_stock_price_location`.
