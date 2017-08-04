@@ -2,6 +2,7 @@ local wibox = require("wibox")
 local awful = require("awful")
 awful.util = require("awful.util")
 local os = require("os")
+local naughty = require("naughty")
 
 
 local function color_tags(color)
@@ -69,7 +70,7 @@ end
 function stock_widget:get_stock_info()
     local f = assert(io.popen(self.get_stock_price_location .. "/get_stock_price.py" .. " " .. self.symbol, "r"))
     local stock_info = assert(f:read("*a"))
-    f:close()
+    f:close()  -- TODO: it would be nice if I could check the exit code here
 
     -- split output on space
     local items = {}
@@ -83,6 +84,13 @@ end
 
 function stock_widget:update()
     local data = self:get_stock_info()
+    if data.price == nil or data.change == nil then
+        naughty.notify({
+                text = "Error getting stock info for " .. self.symbol
+            })
+        self.timer:stop()
+        return
+    end
     data.symbol = self.symbol
 
     -- colors
