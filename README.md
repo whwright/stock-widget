@@ -9,6 +9,8 @@ Inspiration taken from [deficient](https://github.com/deficient) widgets.
 
 ### Installation
 
+First you need an API key from https://www.alphavantage.co/, and place it in `/opt/stock-widget/alphavantage`
+
 ```bash
 cd ~/.config/awesome/
 git clone git@github.com:whwright/stock-widget.git

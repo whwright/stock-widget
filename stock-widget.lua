@@ -59,6 +59,8 @@ function stock_widget:init(args)
         end
     end
 
+    -- set default text before response has come back
+    self:update_widget({ price = "-", change = "-"})
     self.timer = timer({ timeout = args.timeout or 60 })
     self.timer:connect_signal("timeout", function() self:update() end)
     self.timer:start()
@@ -67,33 +69,27 @@ function stock_widget:init(args)
     return self
 end
 
-function stock_widget:get_stock_info()
-    local f = assert(io.popen(self.get_stock_price_location .. "/get_stock_price.py" .. " " .. self.symbol, "r"))
-    local stock_info = assert(f:read("*a"))
-    f:close()  -- TODO: it would be nice if I could check the exit code here
+function stock_widget:update()
+    local cmd = self.get_stock_price_location .. "/get_stock_price.py" .. " " .. self.symbol
+    awful.spawn.with_line_callback(cmd, {
+            stdout = function(line)
+                local items = {}
+                for item in line:gmatch("%S+") do table.insert(items, item) end
 
-    -- split output on space
-    local items = {}
-    for item in stock_info:gmatch("%S+") do table.insert(items, item) end
-
-    return {
-        price  = items[1],
-        change = items[2]
-    }
+                data = {
+                    price  = items[1],
+                    change = items[2]
+                }
+                self:update_widget(data)
+            end,
+            stderr = function(line)
+                naughty.notify({ text = "ERR: " .. line })
+            end
+        })
 end
 
-function stock_widget:update()
-    local data = self:get_stock_info()
-    if data.price == nil or data.change == nil then
-        naughty.notify({
-                text = "Error getting stock info for " .. self.symbol
-            })
-        self.timer:stop()
-        return
-    end
+function stock_widget:update_widget(data)
     data.symbol = self.symbol
-
-    -- colors
     data.symbol_color_on, data.symbol_color_off = color_tags(self.symbol_color)
     data.price_color_on, data.price_color_off = color_tags(self.price_color)
 
