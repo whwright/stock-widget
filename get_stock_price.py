@@ -38,7 +38,7 @@ def lookup_stock(symbol):
 
     j = r.json()
     last_refreshed = j['Meta Data']['3. Last Refreshed']
-    last_refreshed = datetime.strptime(last_refreshed, '%Y-%m-%d %H:%M:%S')
+    last_refreshed = datetime.strptime(last_refreshed, '%Y-%m-%d')
 
     today = last_refreshed.strftime('%Y-%m-%d')
     yesterday = (last_refreshed - timedelta(days=1)).strftime('%Y-%m-%d')

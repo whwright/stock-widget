@@ -83,7 +83,8 @@ function stock_widget:update()
                 self:update_widget(data)
             end,
             stderr = function(line)
-                naughty.notify({ text = "ERR: " .. line })
+                self:update_widget({ price = "ERR", change = "ERR"})
+                -- naughty.notify({ text = "ERR: " .. line })
             end
         })
 end
