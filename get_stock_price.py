@@ -8,11 +8,9 @@ to standard out.
 """
 
 import argparse
-import json
 import os
 import requests
 import sys
-from datetime import datetime, timedelta
 
 
 def main():
@@ -37,17 +35,17 @@ def lookup_stock(symbol):
         sys.exit(1)
 
     j = r.json()
-    last_refreshed = j['Meta Data']['3. Last Refreshed']
-    last_refreshed = datetime.strptime(last_refreshed, '%Y-%m-%d')
-
-    today = last_refreshed.strftime('%Y-%m-%d')
-    yesterday = (last_refreshed - timedelta(days=1)).strftime('%Y-%m-%d')
-
-    curr_price = float(j['Time Series (Daily)'][today]['4. close'])
-    yesterday_close = float(j['Time Series (Daily)'][yesterday]['4. close'])
+    time_series = j['Time Series (Daily)']
+    for i, date_key in enumerate(sorted(time_series, reverse=True)):
+        if i == 0:
+            curr_price = float(time_series[date_key]['4. close'])
+        elif i == 1:
+            last_close = float(time_series[date_key]['4. close'])
+        else:
+            break
 
     price = round(curr_price, 2)
-    percent_change = round(((curr_price - yesterday_close) / yesterday_close) * 100, 2)
+    percent_change = round(((curr_price - last_close) / last_close) * 100, 2)
 
     print('{price} {percent_change}'.format(price=price,
                                             percent_change=percent_change))
