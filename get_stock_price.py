@@ -29,7 +29,7 @@ def lookup_stock(symbol):
     with open(api_key_file, 'r') as f:
         api_key = f.read()
 
-    r = requests.get('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={}&interval=1min&apikey={}'.format(symbol, api_key))
+    r = requests.get('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol={}&interval=1min&apikey={}'.format(symbol, api_key))
     if not r.ok:
         print('Error looking up symbol {}'.format(symbol))
         sys.exit(1)
